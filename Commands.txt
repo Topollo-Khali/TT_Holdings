@@ -1,0 +1,197 @@
+mysql> CREATE TABLE person (
+    ->     PersonID INT NOT NULL PRIMARY KEY,
+    ->     Name VARCHAR(50) NULL,
+    ->     Address VARCHAR(50) NULL,
+    ->     PhoneNumber VARCHAR(20) NULL,
+    ->     BirthDate DATE NULL
+    -> );
+Query OK, 0 rows affected (0.20 sec)
+
+mysql>
+mysql> CREATE TABLE organization (
+    ->     OrganizationID INT NOT NULL PRIMARY KEY,
+    ->     Name VARCHAR(50) NULL,
+    ->     Address VARCHAR(50) NULL,
+    ->     PhoneNumber VARCHAR(20) NULL,
+    ->     BudgetNumber DECIMAL(10,2) NULL,
+    ->     OrganizationType ENUM('Internal', 'External') NULL,
+    ->     industry_type VARCHAR(50) NULL
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql>
+mysql> CREATE TABLE employment (
+    ->     PersonID INT NOT NULL,
+    ->     OrganizationID INT NOT NULL,
+    ->     EmploymentDate DATE NULL,
+    ->     TerminationDate DATE NULL,
+    ->     work_shift ENUM('Day', 'Night', 'Rotational') NULL,
+    ->     PRIMARY KEY (PersonID, OrganizationID),
+    ->     FOREIGN KEY (PersonID) REFERENCES person(PersonID),
+    ->     FOREIGN KEY (OrganizationID) REFERENCES organization(OrganizationID)
+    -> );
+Query OK, 0 rows affected (0.12 sec)
+
+mysql>
+mysql> CREATE TABLE jobposition (
+    ->     PositionID INT NOT NULL PRIMARY KEY,
+    ->     Title VARCHAR(50) NULL,
+    ->     ResponsibleOrganizationID INT NULL,
+    ->     Department VARCHAR(50) NULL,
+    ->     FOREIGN KEY (ResponsibleOrganizationID) REFERENCES organization(OrganizationID)
+    -> );
+Query OK, 0 rows affected (0.23 sec)
+
+mysql>
+mysql> CREATE TABLE positionhistory (
+    ->     PersonID INT NOT NULL,
+    ->     PositionID INT NOT NULL,
+    ->     StartDate DATE NOT NULL,
+    ->     TerminationDate DATE NULL,
+    ->     Salary DECIMAL(10,2) NULL,
+    ->     PRIMARY KEY (PersonID, PositionID, StartDate),
+    ->     FOREIGN KEY (PersonID) REFERENCES person(PersonID),
+    ->     FOREIGN KEY (PositionID) REFERENCES jobposition(PositionID)
+    -> );
+Query OK, 0 rows affected (0.10 sec)
+
+mysql>
+mysql> CREATE TABLE permanentEmployee (
+    ->     PersonID INT NOT NULL PRIMARY KEY,
+    ->     Bonus INT NULL,
+    ->     Credit INT NULL,
+    ->     basic_salary DECIMAL(10,2) NULL,
+    ->     FOREIGN KEY (PersonID) REFERENCES person(PersonID)
+    -> );
+Query OK, 0 rows affected (0.37 sec)
+
+mysql>
+mysql> CREATE TABLE TemporaryEmployee (
+    ->     PersonID INT NOT NULL PRIMARY KEY,
+    ->     ExtraHours INT NULL,
+    ->     contract_end_date DATE NULL,
+    ->     salary DECIMAL(10,2) NULL,
+    ->     FOREIGN KEY (PersonID) REFERENCES person(PersonID)
+    -> );
+Query OK, 0 rows affected (0.56 sec)
+
+
+DATA INSERTION
+
+mysql> INSERT INTO person (PersonID, Name, Address, PhoneNumber, BirthDate) VALUES
+    -> (1, 'Thabo', 'White hill', '57575656', '2010-01-15'),
+    -> (2, 'Neo', 'Ha sekake', '588588', '2000-02-22'),
+    -> (3, 'Mpho', 'Tebellong', '11111', '2002-11-08'),
+    -> (4, 'Mphoza', 'SK- mapuntsuleng', '577778', '2001-11-11'),
+    -> (5, 'Neuza', 'Ha sekake', '588588', '2003-04-04'),
+    -> (6, 'Thiza', 'Sehlabeng', '588588', '2005-05-14'),
+    -> (7, 'Khali', 'Semonkong', '09874567', '1999-01-09'),
+    -> (8, 'Masilo', 'Malibamatsho', '63478965', '2007-05-09'),
+    -> (9, 'Pheko', 'Mohale s hoek', '89756657', '2008-11-12'),
+    -> (10, 'Nkopane', 'Hloahloeng', '985689765', '2006-01-16'),
+    -> (11, 'Thaa', 'Mamosa', '897526', '1999-08-09'),
+    -> (12, 'Mookho', 'Sun city', '897423674', '2004-04-04'),
+    -> (13, 'Mohau', 'Stadium_area', '4654354', '1989-04-11'),
+    -> (14, 'Thepza', 'Stadium_area', '5343224', '2003-09-09'),
+    -> (15, 'Kopza', 'KHALI rd 45', '5432345', '2003-08-07'),
+    -> (16, 'Basanta', 'Khali rd 65', '8765654', '1988-09-12'),
+    -> (17, 'Lerato', 'Maseru', '555-1234', '1990-05-10');
+Query OK, 17 rows affected (0.03 sec)
+Records: 17  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO organization (OrganizationID, Name, Address, PhoneNumber, BudgetNumber, OrganizationType, industry_type) VALUES
+    -> (50, 'Khali enterprise', 'Sekake 640', '696989', 5000000.00, 'External', 'Manufacturing'),
+    -> (51, 'Khali&brothers', 'Sehapas 608', '222223', 3000000.00, 'Internal', 'Retail'),
+    -> (52, 'Descando', 'Qanya', '1111112', 8000000.00, 'External', 'Finance'),
+    -> (53, 'Kylow graphics', 'Likepeng', '89755982', 7000000.00, 'Internal', 'Graphic Design'),
+    -> (54, 'KhaliJnr', 'White hill', '78282487', 5000000.00, 'External', 'Construction'),
+    -> (55, 'Now', 'Qhokoza', '89443', 4000000.00, 'Internal', 'Technology'),
+    -> (56, 'K&K pty', 'Sehapas 608', '632552', 50000.50, 'External', 'Consulting'),
+    -> (57, 'Khaliseniors ltd', 'Sehapa', '2525215', 535897.00, 'Internal', 'Healthcare'),
+    -> (58, 'GiveBack org', 'Likepeng', '3532653', 543543.00, 'Internal', 'Nonprofit'),
+    -> (59, 'KG Ltd', 'Sekakes 640', '353276', 87657.00, 'External', 'Transportation'),
+    -> (60, 'TK Tech', 'SK- mapuntsuleng', '988765', 345667.00, 'Internal', 'Information Technology'),
+    -> (61, 'Lioela PTY', 'White hill', '746354', 7653.50, 'External', 'Food & Beverage');
+Query OK, 12 rows affected (0.01 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO employment (PersonID, OrganizationID, EmploymentDate, TerminationDate, work_shift) VALUES
+    -> (1, 50, '2022-05-10', NULL, 'Day'),
+    -> (2, 51, '2021-08-15', NULL, 'Night'),
+    -> (3, 52, '2023-01-20', NULL, 'Rotational'),
+    -> (4, 53, '2022-03-05', NULL, 'Day'),
+    -> (5, 54, '2021-11-12', NULL, 'Night'),
+    -> (6, 55, '2023-06-18', NULL, 'Rotational'),
+    -> (7, 56, '2022-09-22', NULL, 'Day'),
+    -> (8, 57, '2021-04-03', NULL, 'Night'),
+    -> (9, 58, '2023-10-30', NULL, 'Rotational'),
+    -> (10, 59, '2022-01-15', NULL, 'Day'),
+    -> (11, 60, '2021-07-08', NULL, 'Night'),
+    -> (12, 61, '2023-04-11', NULL, 'Rotational');
+Query OK, 12 rows affected (0.02 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO jobposition (PositionID, Title, ResponsibleOrganizationID, Department) VALUES
+    -> (1, 'Operator', 50, 'Operations'),
+    -> (2, 'Software Developer', 51, 'Development'),
+    -> (3, 'Project Manager', 52, 'Management'),
+    -> (4, 'Graphic Designer', 53, 'Design'),
+    -> (5, 'Database Administrator', 54, 'IT'),
+    -> (6, 'Supervisor', 55, 'Operations'),
+    -> (7, 'Network Administrator', 56, 'IT'),
+    -> (8, 'Network Administrator', 57, 'IT'),
+    -> (9, 'Web Page Admin', 58, 'Development'),
+    -> (10, 'Marketing', 59, 'Marketing'),
+    -> (11, 'Software Tester', 60, 'Quality Assurance'),
+    -> (12, 'Business Analyst', 61, 'Analysis');
+Query OK, 12 rows affected (0.01 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO positionhistory (PersonID, PositionID, StartDate, TerminationDate, Salary) VALUES
+    -> (1, 1, '2022-05-10', NULL, 6000.00),
+    -> (2, 2, '2021-08-15', NULL, 5000.00),
+    -> (3, 3, '2023-01-20', NULL, 7000.00),
+    -> (4, 4, '2022-03-05', NULL, 6500.00),
+    -> (5, 5, '2021-11-12', NULL, 7500.00),
+    -> (6, 6, '2023-06-18', NULL, 4800.00),
+    -> (7, 7, '2022-09-22', NULL, 5200.00),
+    -> (8, 8, '2021-04-03', NULL, 5800.00),
+    -> (9, 9, '2023-10-30', NULL, 6200.00),
+    -> (10, 10, '2022-01-15', NULL, 5300.00),
+    -> (11, 11, '2021-07-08', NULL, 5900.00),
+    -> (12, 12, '2023-04-11', NULL, 6100.00);
+Query OK, 12 rows affected (0.02 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO permanentemployee (PersonID, Bonus, Credit, basic_salary) VALUES
+    -> (1, 1000, 5000, 30000.00),
+    -> (3, 500, 2500, 28000.00),
+    -> (5, 1500, 7500, 35000.00),
+    -> (6, 750, 3750, 32000.00),
+    -> (8, 2000, 10000, 40000.00),
+    -> (9, 1000, 5000, 31000.00),
+    -> (11, 2500, 12500, 45000.00),
+    -> (12, 1250, 6250, 33000.00),
+    -> (13, 800, 1000, 24000.00),
+    -> (14, 500, 700, 22000.00),
+    -> (15, 400, 8000, 29000.00),
+    -> (16, 2500, 2500, 38000.00);
+Query OK, 12 rows affected (0.01 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO temporaryemployee (PersonID, ExtraHours, contract_end_date, salary) VALUES
+    -> (1, 16, '2025-12-31', 20000.00),
+    -> (2, 20, '2025-06-30', 22000.00),
+    -> (3, 10, '2025-09-30', 21000.00),
+    -> (4, 15, '2025-11-30', 21500.00),
+    -> (5, 10, '2025-10-15', 20000.00),
+    -> (6, 25, '2025-08-31', 24000.00),
+    -> (7, 10, '2025-05-30', 21000.00),
+    -> (8, 20, '2025-04-15', 22500.00),
+    -> (9, 15, '2025-07-15', 22000.00),
+    -> (10, 10, '2025-06-30', 21500.00),
+    -> (11, 18, '2025-10-31', 23000.00),
+    -> (12, 12, '2025-09-30', 20000.00);
+Query OK, 12 rows affected (0.02 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
